@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Windows XP</title>
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            width: 300%;
+            height: 300%;
+            margin: 0;
+            background-color: #0adae9;
+        }
+
+        canvas {
+            background-color: #0adae9;
+        }
+    </style>
+</head>
+
+<body onload="initializeCanvas()">
+
+</body>
+
+<script>
+    const fps = 60; // frame number per second
+    let myGamePiece; // xp window
+
+    //initializes and starts myGameArea
+    function initializeCanvas() {
+        myGameArea.initialize();
+        myGameArea.start();
+    }
+    //contains canvas and canvas related methods
+    var myGameArea = {
+        canvas: document.createElement("canvas"), // create the canvas
+        //initialize the canvas
+        initialize: function () {
+            this.canvas.width = window.innerWidth; // set canvas width to window width
+            this.canvas.height = window.innerHeight; // set canvas height to window height
+            this.context = this.canvas.getContext("2d"); // context field provides access to various useful canvas methods
+            document.body.appendChild(this.canvas); // insert canvas into html
+            myGamePiece = new Player(300, 90, 225, 225); // initialize player
+            paintBackground();
+            myGamePiece.update();
+        },
+        //start game by starting interval
+        start: function () {
+            this.frameNo = 0; // this value increases with every frame from now on
+            this.interval = new IntervalTimer(updateGameArea, 1000 / fps);
+            this.interval.pause();
+            // process where the mouse is
+            window.addEventListener('mousemove', function (e) {
+                myGameArea.x = e.pageX;
+                myGameArea.y = e.pageY;
+            });
+            // check if mouse is on the window, if so relocate the window
+            window.addEventListener('mousedown', (e) => {
+                if (myGameArea.x > myGamePiece.left && myGameArea.x < myGamePiece.right && myGameArea.y > myGamePiece.top && myGameArea.y < myGamePiece.bottom) {
+                    myGamePiece.leftMargin = myGameArea.x - myGamePiece.left;
+                    myGamePiece.topMargin = myGameArea.y - myGamePiece.top;
+                    this.interval.resume();
+                }
+            });
+            // don't update the canvas if mouse is not clicked
+            window.addEventListener('mouseup', (e) => {
+                this.interval.pause();
+            });
+        },
+        // clears canvas
+        clear: function () {
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        },
+        //resizes canvas to window size if window size is changed
+        resize: function () {
+            if ((window.innerWidth != myGameArea.canvas.width) || (window.innerHeight != myGameArea.canvas.height)) {
+                console.log("eşit değil");
+                myGameArea.canvas.width = window.innerWidth;
+                myGameArea.canvas.height = window.innerHeight;
+            }
+        }
+    }
+
+    // player constructor
+    function Player(width, height, x, y) {
+        this.width = width;
+        this.height = height;
+        this.x = x;
+        this.y = y;
+        this.left = x;
+        this.top = y;
+        this.right = x + width;
+        this.bottom = y + height;
+        this.topMargin = 0;
+        this.leftMargin = 0;
+        // update canvas
+        this.update = function () {
+            console.log("left: " + this.left + " top: " + this.top + " right: " + this.right + " bottom: " + this.bottom);
+            ctx = myGameArea.context;
+            ctx.fillStyle = "black"; // border color
+            ctx.fillRect(this.x -2, this.y - 2, this.width + 4, this.height + 4); // border
+            ctx.fillStyle = "grey"; // main color
+            ctx.fillRect(this.x, this.y, this.width, this.height); // main part
+            ctx.fillStyle = "blue"; // header color
+            ctx.fillRect(this.x, this.y, this.width, this.height / 5); // head
+        }
+        // update component position
+        this.newPos = function () {
+            if (myGameArea.x && myGameArea.y) {
+                this.x = myGameArea.x - this.leftMargin;
+                this.y = myGameArea.y - this.topMargin;
+                this.left = this.x;
+                this.top = this.y;
+                this.right = this.x + this.width;
+                this.bottom = this.y + this.height / 5;
+            }
+        }
+    }
+
+    // this function updates the game area every frame
+    function updateGameArea() {
+        myGameArea.frameNo++;
+        //myGameArea.resize();
+        myGamePiece.newPos();
+        myGamePiece.update();
+    }
+
+    function paintBackground() {
+        var ctx = myGameArea.context;
+        var height = myGameArea.canvas.height;
+        var width = myGameArea.canvas.width;
+        ctx.fillStyle = "green";
+        ctx.moveTo(-100, height + 100);
+        ctx.bezierCurveTo(100, 200, 500, 500, width + 100, height);
+        ctx.stroke();
+        ctx.fill();
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        for (i = 0; i <= 100; i += 25) {
+            ctx.arc(width * (2/3) + i, height / 4, 20, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+        for (i = 25; i <= 100; i += 25) {
+            ctx.arc(width * (2/3) + i, height / 4 + 10, 20, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+        for (i = 25; i <= 125; i += 25) {
+            ctx.arc(width * (2/3) + i, height / 4 - 10, 20, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+    };
+
+    // this object enables us to set pausable intervals
+    function IntervalTimer(callback, interval) {
+        var timerId, startTime, remaining = 0;
+        var state = 0; //  0 = idle, 1 = running, 2 = paused, 3= resumed
+
+        this.pause = function () {
+            if (state != 1) return;
+
+            remaining = interval - (new Date() - startTime);
+            window.clearInterval(timerId);
+            state = 2;
+        };
+
+        this.resume = function () {
+            if (state != 2) return;
+
+            state = 3;
+            window.setTimeout(this.timeoutCallback, remaining);
+        };
+
+        this.timeoutCallback = function () {
+            if (state != 3) return;
+            
+            callback();
+
+            startTime = new Date();
+            timerId = window.setInterval(callback, interval);
+            state = 1;
+        };
+
+        startTime = new Date();
+        timerId = window.setInterval(callback, interval);
+        state = 1;
+    }
+</script>
+
+</html>
