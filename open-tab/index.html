@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="js/loadTable.js"></script>
+</head>
+
+<body>
+    <h2>List Of Defined URL's To Trigger</h2>
+    <h4>Just type and set your frequent url's, then automatically launch them anytime you want. Save time, no data on
+        server side, your url list is in your browser. </h4>
+    <table id="url_table">
+        <tr>
+            <th>Order</th>
+            <th>URL</th>
+            <th>Set/Change URL</th>
+            <th>Manual Fire</th>
+            <th>Delete URL</th>
+        </tr>
+    </table>
+
+    <br><br>
+
+</body>
+<script>
+
+    if (typeof (Storage) !== "undefined") {
+        let nofUrls = parseInt(localStorage.getItem("nof_urls") || 0);
+        loadTable(nofUrls);
+    } else {
+        alert("Sorry, your browser does not support Web Storage...");
+    }
+
+</script>
+
+</html>

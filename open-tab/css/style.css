@@ -1,0 +1,47 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td,
+th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.set_button {
+    min-width: 100px;
+}
+
+.fire_button {
+    min-width: 150px;
+}
+
+.fire_all_button {
+    background-color: #4CAF50;
+    /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.add_url_button {
+    position: relative;
+    left: 40%;
+}
+
+.space_between {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px;
+}
