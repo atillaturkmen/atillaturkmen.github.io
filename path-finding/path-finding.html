@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Path Finding Algorithms</title>
+    <link rel="stylesheet" href="path-finding.css">
+    <script src="Queue.js"></script>
+    <script src="path-finding.js"></script>
+</head>
+
+<body onload="createGrid()">
+    <h3 class="text" id="instruction">Choose a starting node. You can create obstacles with right click</h3>
+    <div class="flex-container">
+        <input type="radio" id="bfs" name="algorithm" value="bfs" checked="checked">
+        <label for="bfs">Breadth First Search</label>
+        <input type="radio" id="dfs" name="algorithm" value="dfs">
+        <label for="dfs">Depth First Search</label>
+    </div>
+    <div class="grid-container" id="grid"></div>
+</body>
+
+</html>
